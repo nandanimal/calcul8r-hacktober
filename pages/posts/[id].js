@@ -137,7 +137,7 @@ export default function PostPage({ post, initialComments }) {
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         placeholder="Add a comment…"
-                        className="focus:outline-none pb-24 text-shadow-md"
+                        className="focus:outline-none pb-24 text-shadow-md w-full"
                     />
                     <button
                         type="submit"
