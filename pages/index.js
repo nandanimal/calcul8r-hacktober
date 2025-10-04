@@ -66,6 +66,7 @@ export default function Home() {
                             posts.map((p) => (
                                 <Post
                                     key={p.id}
+                                    id={p.id}
                                     user={
                                         p?.author?.displayName ||
                                         p?.author?.handle ||
