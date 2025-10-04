@@ -4,8 +4,8 @@ const Post = ({ expression, result, likeCount, commentCount, user, date }) => {
     const dummyData = {
         expression: "5 + 3",
         result: "8",
-        likeCount: 10,
-        commentCount: 2,
+        likeCount: 0,
+        commentCount: 0,
         user: "John_Doe",
         date: "2023-10-01",
     };

@@ -1,34 +1,25 @@
 // pages/api/posts/[id]/like.js
 import prisma from "@/lib/prisma";
+import { auth0 } from "@/lib/auth0";
 
 export default async function handler(req, res) {
     const { id: postId } = req.query;
 
+    const session = await auth0.getSession(req, res);
+    if (!session) return res.status(401).json({ error: "Not authenticated" });
+
+    const me = await prisma.user.findUnique({
+        where: { auth0UserId: session.user.sub },
+    });
+    if (!me) return res.status(403).json({ error: "User missing" });
+
     if (req.method === "POST") {
-        // Like a post
         try {
-            const { userId } = req.body || {};
-            if (!postId || !userId)
-                return res
-                    .status(400)
-                    .json({ error: "postId and userId required" });
-
-            // Ensure post exists (optional but nice)
-            const post = await prisma.post.findUnique({
-                where: { id: postId },
-                select: { id: true },
-            });
-            if (!post) return res.status(404).json({ error: "Post not found" });
-
             await prisma.like
-                .create({
-                    data: { postId, userId },
-                })
+                .create({ data: { postId, userId: me.id } })
                 .catch((e) => {
-                    // Ignore duplicate like (unique constraint)
                     if (e.code !== "P2002") throw e;
-                });
-
+                }); // ignore duplicate
             const count = await prisma.like.count({ where: { postId } });
             return res.status(200).json({ ok: true, likeCount: count });
         } catch (err) {
@@ -38,15 +29,8 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "DELETE") {
-        // Unlike a post
         try {
-            const { userId } = req.body || {};
-            if (!postId || !userId)
-                return res
-                    .status(400)
-                    .json({ error: "postId and userId required" });
-
-            await prisma.like.deleteMany({ where: { postId, userId } });
+            await prisma.like.deleteMany({ where: { postId, userId: me.id } });
             const count = await prisma.like.count({ where: { postId } });
             return res.status(200).json({ ok: true, likeCount: count });
         } catch (err) {

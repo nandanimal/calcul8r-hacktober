@@ -1,7 +1,5 @@
 "use client";
-import Header from "@/components/Header";
-import Tabs from "@/components/Tabs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 
 const buttons = [
@@ -15,26 +13,84 @@ const buttons = [
 export default function Calculator() {
     const [input, setInput] = useState("");
     const [result, setResult] = useState("");
+    const [me, setMe] = useState(null);
+    const [isPosting, setIsPosting] = useState(false);
+    const [postStatus, setPostStatus] = useState("");
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const r = await fetch("/api/me");
+                const j = await r.json();
+                setMe(j.user || null);
+            } catch {}
+        })();
+    }, []);
+
+    const submitPost = async (expression, evaluated) => {
+        if (!me) {
+            const returnTo =
+                typeof window !== "undefined"
+                    ? window.location.pathname + window.location.search
+                    : "/";
+            window.location.href = `/auth/login?returnTo=${encodeURIComponent(
+                returnTo
+            )}`;
+            return;
+        }
+
+        try {
+            setIsPosting(true);
+            setPostStatus("Posting…");
+            const res = await fetch("/api/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ expression, result: String(evaluated) }),
+            });
+            if (!res.ok) {
+                const j = await res.json().catch(() => ({}));
+                setPostStatus(j?.error || "Failed to post");
+                return;
+            }
+            setPostStatus("Posted!");
+        } catch (e) {
+            setPostStatus("Failed to post");
+        } finally {
+            setIsPosting(false);
+            setTimeout(() => setPostStatus(""), 1500);
+        }
+    };
 
     const handlePress = (value) => {
         if (value === "AC") {
             setInput("");
             setResult("");
-        } else if (value === "=") {
+            setPostStatus("");
+            return;
+        }
+
+        if (value === "=") {
             try {
                 const formattedInput = input
                     .replace(/×/g, "*")
                     .replace(/÷/g, "/");
-                // eval should be replaced with a safer parser later
+                // NOTE: eval is for MVP only; swap for a safe parser later
                 const evalResult = eval(formattedInput);
-                setResult(evalResult.toString());
-            } catch (error) {
+                const asText = evalResult.toString();
+                setResult(asText);
+                submitPost(input, asText);
+            } catch {
                 setResult("Error");
+                setPostStatus("Failed to post");
             }
-        } else if (result) {
-            setInput("");
+            return;
+        }
+
+        if (result) {
+            // start a fresh expression after a result
+            setInput(value);
             setResult("");
-            setInput((prev) => prev + value);
+            setPostStatus("");
         } else {
             setInput((prev) => prev + value);
         }
@@ -44,38 +100,40 @@ export default function Calculator() {
         result.length > 10 ? result.slice(0, 10) + "..." : result;
 
     return (
-        <>
-            <Layout>
-                {/* Display */}
-                <div className="calc-container px-3">
-                    <div className="mb-5 border border-dotted border-green-900 p-5 rounded-lg shadow h-[150px] flex flex-col justify-end">
-                        <p className="text-right text-2xl text-darkGreen text-shadow-md">
-                            {input}
-                        </p>
-                        <p className="text-right text-6xl text-darkGreen font-semibold text-shadow-md">
-                            {displayResult}
-                        </p>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex flex-col gap-2">
-                        {buttons.map((row, rowIndex) => (
-                            <div key={rowIndex} className="flex gap-2">
-                                {row.map((button, buttonIndex) => (
-                                    <button
-                                        key={buttonIndex}
-                                        onClick={() => handlePress(button)}
-                                        className={`flex-1 text-shadow-md text-3xl border border-dotted border-darkGreen rounded-lg py-5 text-darkGreen font-medium shadow
-                  ${button === "0" ? "flex-[2]" : ""}`}
-                                    >
-                                        {button}
-                                    </button>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+        <Layout>
+            <div className="calc-container px-3">
+                <div className="mb-2 text-right text-xs h-5">
+                    {postStatus ? postStatus : "\u00A0"}
                 </div>
-            </Layout>
-        </>
+
+                <div className="mb-5 border border-dotted border-green-900 p-5 rounded-lg shadow h-[150px] flex flex-col justify-end">
+                    <p className="text-right text-2xl text-darkGreen text-shadow-md">
+                        {input}
+                    </p>
+                    <p className="text-right text-6xl text-darkGreen font-semibold text-shadow-md">
+                        {displayResult}
+                    </p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    {buttons.map((row, rowIndex) => (
+                        <div key={rowIndex} className="flex gap-2">
+                            {row.map((button, buttonIndex) => (
+                                <button
+                                    key={buttonIndex}
+                                    onClick={() => handlePress(button)}
+                                    className={`flex-1 text-shadow-md text-3xl border border-dotted border-darkGreen rounded-lg py-5 text-darkGreen font-medium shadow ${
+                                        button === "0" ? "flex-[2]" : ""
+                                    }`}
+                                    disabled={isPosting && button === "="}
+                                >
+                                    {button}
+                                </button>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </Layout>
     );
 }
