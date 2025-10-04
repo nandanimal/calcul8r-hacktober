@@ -4,9 +4,9 @@ import localFont from "next/font/local";
 
 const dince = localFont({
     src: [
-        { path: "../public/fonts/rombyte.ttf", weight: "400", style: "medium" },
+        { path: "../public/rombyte.ttf", weight: "400", style: "medium" },
         {
-            path: "../public/fonts/rombyte.ttf",
+            path: "../public/rombyte.ttf",
             weight: "400",
             style: "regular",
         },

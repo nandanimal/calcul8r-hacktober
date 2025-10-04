@@ -105,3 +105,6 @@ export default function Home() {
         </div>
     );
 }
+
+import { requireAuth } from "@/lib/requireAuth";
+export const getServerSideProps = requireAuth();

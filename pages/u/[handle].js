@@ -78,3 +78,6 @@ export default function UserProfile() {
         </main>
     );
 }
+
+import { requireAuth } from "@/lib/requireAuth";
+export const getServerSideProps = requireAuth();

@@ -120,3 +120,6 @@ export default function MePage() {
         </Layout>
     );
 }
+
+import { requireAuth } from "@/lib/requireAuth";
+export const getServerSideProps = requireAuth();

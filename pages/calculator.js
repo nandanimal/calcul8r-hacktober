@@ -137,3 +137,6 @@ export default function Calculator() {
         </Layout>
     );
 }
+
+import { requireAuth } from "@/lib/requireAuth";
+export const getServerSideProps = requireAuth();
