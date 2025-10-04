@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
     }, []);
 
     return (
-        <div className="w-full h-screen overflow-y-scroll relative">
+        <div className="w-full h-screen overflow-y-scroll relative ">
             <Header />
             {children}
             <Tabs />

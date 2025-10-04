@@ -101,12 +101,12 @@ export default function Calculator() {
 
     return (
         <Layout>
-            <div className="calc-container px-3">
+            <div className="calc-container px-3 ">
                 <div className="mb-2 text-right text-xs h-5">
                     {postStatus ? postStatus : "\u00A0"}
                 </div>
 
-                <div className="mb-5 border border-dotted border-green-900 p-5 rounded-lg shadow h-[150px] flex flex-col justify-end">
+                <div className="mb-5 border border-dotted border-green-900 p-5 rounded-lg shadow md:h-[150px] h-[100px] flex flex-col justify-end">
                     <p className="text-right text-2xl text-darkGreen text-shadow-md">
                         {input}
                     </p>
@@ -122,7 +122,7 @@ export default function Calculator() {
                                 <button
                                     key={buttonIndex}
                                     onClick={() => handlePress(button)}
-                                    className={`flex-1 text-shadow-md text-3xl border border-dotted border-darkGreen rounded-lg py-5 text-darkGreen font-medium shadow ${
+                                    className={`flex-1 text-shadow-md text-xl sm:text-3xl border border-dotted border-darkGreen rounded-lg py-5 text-darkGreen font-medium shadow ${
                                         button === "0" ? "flex-[2]" : ""
                                     }`}
                                     disabled={isPosting && button === "="}

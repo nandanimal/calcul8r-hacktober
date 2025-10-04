@@ -13,6 +13,13 @@ module.exports = {
                 greenDark: "#44513B",
                 accent: "rgba(68, 81, 59, 0.20)",
             },
+            height: {
+                screen: "100vh", // default
+                dvh: "100dvh", // dynamic viewport
+                lvh: "100lvh", // large viewport
+                svh: "100svh", // small viewport
+                fill: "-webkit-fill-available", // iOS Safari fallback
+            },
             boxShadow: {
                 shadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.25)",
             },
