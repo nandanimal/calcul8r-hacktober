@@ -72,7 +72,7 @@ export default function MePage() {
                     <span>
                         @{me?.handle || (authUser?.name?.split(" ")[0] ?? "me")}
                     </span>
-                    <img src="/star.svg" alt="" />
+                    <img src="/star.svg" alt="" className="h-8 w-auto" />
                 </div>
 
                 {/* Counts / status */}

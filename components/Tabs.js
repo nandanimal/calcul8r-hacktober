@@ -10,7 +10,7 @@ const Tabs = () => {
                         <img
                             src="/home.svg"
                             alt="calc"
-                            className="w-[32px] h-[32px]"
+                            className="h-8 w-auto"
                         />
                     </Link>
                 </div>
@@ -19,7 +19,7 @@ const Tabs = () => {
                         <img
                             src="/calc.svg"
                             alt="calc"
-                            className="w-[32px] h-[32px]"
+                            className="h-8 w-auto"
                         />
                     </Link>
                 </div>
@@ -28,7 +28,7 @@ const Tabs = () => {
                         <img
                             src="/profile.svg"
                             alt="calc"
-                            className="w-[32px] h-[32px]"
+                            className="h-8 w-auto"
                         />
                     </Link>
                 </div>
