@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 
 import localFont from "next/font/local";
 
-const dince = localFont({
+const rombyte = localFont({
     src: [
         { path: "../public/rombyte.ttf", weight: "400", style: "medium" },
         {
@@ -15,5 +15,9 @@ const dince = localFont({
 });
 
 export default function App({ Component, pageProps }) {
-    return <Component {...pageProps} />;
+    return (
+        <div className={rombyte.variable}>
+            <Component {...pageProps} />
+        </div>
+    );
 }
